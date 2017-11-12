@@ -30,29 +30,42 @@ def print_map(location):
     print str(north) + "\n" + str(south)
 
 
-
-
-def print_description(location):
-    print locations[position]['description']
-
-
-
-
-while True:
+def print_current_location(position):
+    """
+    :param position: a tuple with the coordinates of where the player currently is -
+    :return: prints information about where the user is
+    """
     location = locations[position]['name']
     print 'You are at the %s' % location
-    print_description(location)
+    print locations[position]['description']
     print_map(location)
 
+
+def get_valid_direction(position):
+    """
+    :param position: a tuple with the coordinates of where the player currently is
+    :return: the list of directions that are attainable from where the player currently is
+    """
     valid_directions = {}
     for k, v in directions.iteritems():
         possible_position = (position[0] + v[0], position[1] + v[1])
         possible_location = locations.get(possible_position)
         if possible_location:
-            print 'to the %s is a %s' % (k, possible_location['name'])
             valid_directions[k] = possible_position
+    return valid_directions
+
+
+
+while True:
+    print_current_location(position)
+    get_valid_direction(position)
+
+    for key in get_valid_direction(position):
+        print 'to the %s is a %s' % (key, locations[get_valid_direction(position)[key]]['name'])
 
     direction = raw_input('which direction do you want to go?\n')
-    position = valid_directions[direction]
 
-
+    while not get_valid_direction(position).get(direction):
+        direction = raw_input('which direction do you want to go?\n')
+    else:
+        position = get_valid_direction(position)[direction]
